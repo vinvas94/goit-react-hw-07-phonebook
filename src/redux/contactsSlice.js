@@ -1,37 +1,43 @@
 import { createSlice } from '@reduxjs/toolkit';
-import storage from 'redux-persist/lib/storage';
-import { persistReducer } from 'redux-persist';
-import { nanoid } from 'nanoid';
+import { addContact, deleteContact, fetchContacts } from 'services/api';
+import * as helpersReducer from './helpersReducer';
 
-export const contactsSlice = createSlice({
-  name: 'userContacts',
-  initialState: {
-    items: [],
-    filter: '',
-  },
-  reducers: {
-    addContact: (state, action) => {
-      state.items.push({ id: nanoid(), ...action.payload });
-    },
-    deleteContact: (state, action) => {
-      state.items = state.items.filter(
-        contact => contact.id !== action.payload
+const initialState = {
+  items: [],
+  isLoading: false,
+  error: null,
+};
+
+const contactsSlice = createSlice({
+  name: 'contacts',
+  initialState,
+  extraReducers: builder => {
+    builder
+      .addCase(fetchContacts.fulfilled, (state, { payload }) => {
+        state.items = payload;
+      })
+      .addCase(addContact.fulfilled, (state, { payload }) => {
+        state.items.unshift(payload);
+      })
+      .addCase(deleteContact.fulfilled, (state, { payload }) => {
+        state.items = state.items.filter(contact => contact.id !== payload);
+      })
+      .addMatcher(
+        action => action.type.endsWith('fulfilled'),
+        helpersReducer.handleFulfilled
+      )
+      .addMatcher(
+        action => action.type.endsWith('pending'),
+        helpersReducer.handlePending
+      )
+      .addMatcher(
+        action => action.type.endsWith('rejected'),
+        helpersReducer.handleReject
       );
-    },
-    setFilter: (state, action) => {
-      state.filter = action.payload;
-    },
   },
 });
 
-const persistConfig = {
-  key: 'root',
-  storage,
-};
+export default contactsSlice.reducer;
 
-export const { addContact, deleteContact, setFilter } = contactsSlice.actions;
-
-export const getContacts = state => state.userContacts.items;
-export const getFilter = state => state.userContacts.filter;
-
-export default persistReducer(persistConfig, contactsSlice.reducer);
+export const getFilter = state => state.userFilter.filter;
+export { fetchContacts, addContact, deleteContact };

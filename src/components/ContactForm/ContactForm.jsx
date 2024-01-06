@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, getContacts } from '../../redux/contactsSlice';
+import { getContacts } from '../../redux/selector';
+import { addContact } from '../../redux/contactsSlice';
 
 export const ContactForm = ({ onSubmit, title }) => {
   const contacts = useSelector(getContacts);
