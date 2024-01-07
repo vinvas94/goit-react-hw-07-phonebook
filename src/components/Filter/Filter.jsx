@@ -1,18 +1,22 @@
-import { getFilter } from '../../redux/contactsSlice';
-import { addFilter } from '../../redux/filterSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { addFilter } from '../../redux/contactsSlice';
+import { useDispatch } from 'react-redux';
 
 const Filter = () => {
-  const filter = useSelector(getFilter);
   const dispatch = useDispatch();
+
+  const changeFilter = event => {
+    const filter = event.currentTarget.value;
+    dispatch(addFilter(filter));
+  };
 
   return (
     <div>
       Find contacts by name
       <input
         type="text"
-        value={filter}
-        onChange={e => dispatch(addFilter(e.target.value))}
+        name="name"
+        onChange={e => changeFilter}
+        pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
       />
     </div>
   );
