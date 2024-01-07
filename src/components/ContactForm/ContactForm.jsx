@@ -16,20 +16,30 @@ export const ContactForm = ({ title }) => {
     const formatPhone = phone => {
       return phone.replace(/(\d{3})(\d{2})(\d{2})/, `$1-$2-$3`);
     };
+
+    const contactName = form.elements.name.value.toLowerCase();
+    const contactPhone = formatPhone(form.elements.phone.value);
     const contact = {
       id: nanoid(),
       name: form.elements.name.value,
-      phone: formatPhone(form.elements.phone.value),
+      phone: contactPhone,
       createAt: nanoid(),
     };
+
     const isContactExists = contacts.some(
-      contact => contact.name === form.elements.name.value
+      existingContact =>
+        existingContact.name.toLowerCase() === contactName &&
+        existingContact.phone === contactPhone
     );
+
     if (isContactExists) {
-      alert(`${form.elements.name.value} is already in contacts.`);
+      alert(
+        `${form.elements.name.value} is already in contacts with the same phone number.`
+      );
     } else {
       dispatch(addContact(contact));
     }
+
     form.reset();
   };
 

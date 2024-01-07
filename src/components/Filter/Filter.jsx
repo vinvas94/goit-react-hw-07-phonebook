@@ -15,7 +15,7 @@ const Filter = () => {
       <input
         type="text"
         name="name"
-        onChange={e => changeFilter}
+        onChange={e => changeFilter(e)}
         pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
       />
     </div>
